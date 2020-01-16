@@ -13,35 +13,15 @@
         android:orientation="horizontal"
         android:paddingTop="10dp">
 
-        <com.junlong0716.shadow.TriangleView
-            android:id="@+id/tv_1"
+
+        <com.junlong0716.shadow.MyTabView
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
             android:layout_marginStart="12dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="44dp"
-            android:layout_gravity="center" />
+            android:layout_marginEnd="12dp"
 
-        <com.junlong0716.shadow.TriangleView
-            android:id="@+id/tv_2"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_gravity="center" />
-
-        <com.junlong0716.shadow.TriangleView
-            android:id="@+id/tv_3"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_gravity="center" />
-
-        <com.junlong0716.shadow.TriangleView
-            android:id="@+id/tv_4"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_marginEnd="12dp"/>
+            />
 
     </LinearLayout>
 
