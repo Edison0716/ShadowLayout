@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fe8159"
+    android:orientation="vertical"
+    android:paddingTop="30dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <com.junlong0716.shadow.TriangleView
+            android:id="@+id/tv_1"
+            android:layout_marginStart="12dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="44dp"
+            android:layout_gravity="center" />
+
+        <com.junlong0716.shadow.TriangleView
+            android:id="@+id/tv_2"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_gravity="center" />
+
+        <com.junlong0716.shadow.TriangleView
+            android:id="@+id/tv_3"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_gravity="center" />
+
+        <com.junlong0716.shadow.TriangleView
+            android:id="@+id/tv_4"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginEnd="12dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginStart="12dp"
+        android:background="#fff"
+        android:layout_marginEnd="12dp"/>
+
+
+
+</LinearLayout>

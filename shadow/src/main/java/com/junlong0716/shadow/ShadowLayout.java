@@ -143,6 +143,7 @@ public class ShadowLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.d("onMeasure","onMeasure");
         // ShadowLayout的最大的宽度与高度
         int shadowLayoutMaxHeight = 0;
         int shadowLayoutMaxWidth = 0;
@@ -312,6 +313,7 @@ public class ShadowLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.d("onLayout","onLayout");
         layoutChildren(l, t, r, b);
         // 布局发生改动
         if (changed) {
@@ -384,25 +386,19 @@ public class ShadowLayout extends ViewGroup {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         Log.d("onDraw", "onDraw");
+        super.onDraw(canvas);
+        canvas.save();
         Path path = ShapeUtils.roundedRect(mShadowMarginLeft, mShadowMarginTop, getMeasuredWidth() - mShadowMarginRight, getMeasuredHeight() - mShadowMarginBottom, mCornerRadiusTL, mCornerRadiusTR, mCornerRadiusBL, mCornerRadiusBR);
+
+        drawForeground(canvas);
+
+        canvas.restore();
+
         // 绘制路径
         canvas.drawPath(path, mBgPaint);
         // 裁剪
         canvas.clipPath(path);
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-        Log.d("draw", "draw");
-        canvas.save();
-        Path path = ShapeUtils.roundedRect(mShadowMarginLeft, mShadowMarginTop, getMeasuredWidth() - mShadowMarginRight, getMeasuredHeight() - mShadowMarginBottom, mCornerRadiusTL, mCornerRadiusTR, mCornerRadiusBL, mCornerRadiusBR);
-        // 裁剪
-        canvas.clipPath(path);
-        drawForeground(canvas);
-        canvas.restore();
     }
 
     private void drawForeground(Canvas canvas) {
