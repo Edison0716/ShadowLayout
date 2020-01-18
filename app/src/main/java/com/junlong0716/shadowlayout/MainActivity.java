@@ -25,10 +25,12 @@ public class MainActivity extends AppCompatActivity {
 //        TriangleView tv4 = findViewById(R.id.tv_4);
 
         ArrayList<MyTabView.MyTabEntity> objects = new ArrayList<>();
-        objects.add(new MyTabView.MyTabEntity("haha",true));
-        objects.add(new MyTabView.MyTabEntity("haha",false));
-        objects.add(new MyTabView.MyTabEntity("haha",false));
-        objects.add(new MyTabView.MyTabEntity("haha",false));
+        objects.add(new MyTabView.MyTabEntity("国际租车",true));
+        objects.add(new MyTabView.MyTabEntity("国际租车",false));
+        objects.add(new MyTabView.MyTabEntity("国际租车",false));
+        objects.add(new MyTabView.MyTabEntity("国际租车",false));
+
+
         tv1.setData(objects);
 
 //        tv1.setChildViewSelected(true);

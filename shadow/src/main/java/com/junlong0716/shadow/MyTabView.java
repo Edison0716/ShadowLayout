@@ -50,9 +50,10 @@ public class MyTabView extends View {
     // 底部控制点延伸因子
     private static float RADIUS_BOTTOM_OVER_LENGTH = 0.1f;
 
-    private int mTabBackgroundShiftY = 10;
+    private int mTabBackgroundShiftY = 15;
     private Paint mRectFPaint;
     private Paint mTextPaint;
+
 
     @Nullable
     private TabClickCallback mTabClickCallback;
@@ -99,6 +100,18 @@ public class MyTabView extends View {
         } else {
             mTabWidth = getMeasuredWidth() / mTabData.size();
         }
+        int maximumWidth = getMeasuredWidth() / 4;
+
+        // 设置一个最大的宽度
+        if (mTabWidth > maximumWidth) {
+            mTabWidth = maximumWidth;
+
+            for (int i = 0; i < 4 - mTabData.size(); i++) {
+                MyTabEntity myTabEntity = new MyTabEntity("", false);
+                myTabEntity.setSpaceAdd(true);
+                mTabData.add(myTabEntity);
+            }
+        }
 
         mSelectTabWidth = mTabWidth + mTabWidth / 6;
 
@@ -120,7 +133,6 @@ public class MyTabView extends View {
     }
 
     private void drawText(Canvas canvas, RectF textRectF, MyTabEntity myTabEntity) {
-        String text = "哈哈";
         Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
         float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
         float baseline = textRectF.centerY() + distance;
@@ -129,7 +141,7 @@ public class MyTabView extends View {
         } else {
             mTextPaint.setColor(Color.WHITE);
         }
-        canvas.drawText(text, textRectF.centerX(), baseline, mTextPaint);
+        canvas.drawText(myTabEntity.getTabTitle(), textRectF.centerX(), baseline, mTextPaint);
     }
 
     private void calculateBackgroundPath() {
@@ -203,7 +215,6 @@ public class MyTabView extends View {
         mSelectedRightPath.quadTo(pointControlYX, pointControlYY, pointDX, pointDY);
 
         // 第五个点 计算
-        // 左上角的控制点 -
         int pointEX = pointControlYX - (((pointAX - pointControlZX) - (pointAX - pointControlYX)) * (longEdge - pointAY) / longEdge);
         int pointEY = pointControlZY - (pointControlZY * pointAY / longEdge);
 
@@ -289,7 +300,7 @@ public class MyTabView extends View {
         Path path = mOtherPathCache.get(index);
         if (path == null) {
             path = new Path();
-            mOtherPathCache.setValueAt(index, path);
+            mOtherPathCache.put(index, path);
         } else {
             return path;
         }
@@ -333,17 +344,17 @@ public class MyTabView extends View {
         int pointCX = pointControlXX + ((pointControlYX - pointControlXX) * (longEdge - commonPointDistanceWithControl) / longEdge);
         // 右下角控制点 - (右下角控制点 * 控制点与普通点的边长) / 斜边长
         int pointCY = pointControlYY - (pointControlYY * commonPointDistanceWithControl / longEdge);
-        path.lineTo(pointCX,pointCY);
+        path.lineTo(pointCX, pointCY);
         // 普通点 5
         // 右下角的控制点 + 控制点与普通点的边长
         int pointEX = pointControlYX + commonPointDistanceWithControl;
         int pointEY = pointControlZY;
-        path.quadTo(pointControlYX,pointControlYY,pointEX,pointEY);
+        path.quadTo(pointControlYX, pointControlYY, pointEX, pointEY);
         // 普通点 6
         // 左下角控制点 - 控制点与普通点的边长
         int pointFX = pointControlZX - commonPointDistanceWithControl;
         int pointFY = pointEY;
-        path.lineTo(pointFX,pointFY);
+        path.lineTo(pointFX, pointFY);
         // 普通点 7
         // （左上角控制点 - 左下角控制点）^ 2 +height ^ 2 开根号
         int leftLongEdge = (int) Math.sqrt((pointControlWX - pointControlZX) * (pointControlWX - pointControlZX) + getMeasuredHeight() * getMeasuredHeight());
@@ -351,14 +362,14 @@ public class MyTabView extends View {
         int pointGX = pointControlWX - ((pointControlWX - pointControlZX) * (leftLongEdge - commonPointDistanceWithControl) / leftLongEdge);
         //     (左斜边长 - 普通点与控制点之间的距离) * Height / 左斜边长
         int pointGY = (leftLongEdge - commonPointDistanceWithControl) * getMeasuredHeight() / leftLongEdge;
-        path.quadTo(pointControlZX,pointControlZY,pointGX,pointGY);
+        path.quadTo(pointControlZX, pointControlZY, pointGX, pointGY);
         // 普通点 8
         // 左上角的控制点 - (左上角的控制点 - 左下角的控制点 * 控制点与普通点的距离 / 边长)
         // 普通点与控制点的距离 * 高度  / 做斜边长
         int pointHX = pointControlWX - ((pointControlWX - pointControlZX) * commonPointDistanceWithControl / leftLongEdge);
         int pointHY = commonPointDistanceWithControl * getMeasuredHeight() / leftLongEdge;
-        path.lineTo(pointHX,pointHY);
-        path.quadTo(pointControlWX,pointControlWY,pointAX,pointAY);
+        path.lineTo(pointHX, pointHY);
+        path.quadTo(pointControlWX, pointControlWY, pointAX, pointAY);
         return path;
     }
 
@@ -369,7 +380,7 @@ public class MyTabView extends View {
         canvas.drawPath(mTabBackgroundPath, mTabBackgroundPaint);
         // 绘制选中的
         for (int i = 0; i < mTabData.size(); ++i) {
-            if (mTabData.get(i).isTabSelected()) {
+            if (mTabData.get(i).isTabSelected() && !mTabData.get(i).isSpaceAdd()) {
                 switch (mTabData.get(i).getTabTyp()) {
                     case TAB_TYPE_LEFT:
                         canvas.drawPath(mSelectedLeftPath, mSelectedPathPaint);
@@ -417,19 +428,16 @@ public class MyTabView extends View {
 
     private void calculateFingerPressedTab(float fingerUpX) {
         int pressedIndex = (int) (fingerUpX / mTabWidth);
-        Toast.makeText(getContext(), pressedIndex + "", Toast.LENGTH_SHORT).show();
-
         for (int i = 0; i < mTabData.size(); ++i) {
             mTabData.get(i).setTabSelected(false);
-            if (i == pressedIndex) {
+            if (i == pressedIndex && !mTabData.get(i).isSpaceAdd()) {
                 mTabData.get(i).setTabSelected(true);
+                invalidate();
+                Toast.makeText(getContext(), pressedIndex + "", Toast.LENGTH_SHORT).show();
+                if (mTabClickCallback != null) {
+                    mTabClickCallback.onTabClickCallback(pressedIndex);
+                }
             }
-        }
-
-        invalidate();
-
-        if (mTabClickCallback != null) {
-            mTabClickCallback.onTabClickCallback(pressedIndex);
         }
     }
 
@@ -447,6 +455,7 @@ public class MyTabView extends View {
         private String tabTitle;
         private boolean tabSelected;
         private int tabTyp;
+        private boolean isSpaceAdd = false;
 
         public MyTabEntity(String tabTitle, boolean tabSelected) {
             this.tabTitle = tabTitle;
@@ -475,6 +484,14 @@ public class MyTabView extends View {
 
         public void setTabTyp(int tabTyp) {
             this.tabTyp = tabTyp;
+        }
+
+        public boolean isSpaceAdd() {
+            return isSpaceAdd;
+        }
+
+        public void setSpaceAdd(boolean spaceAdd) {
+            isSpaceAdd = spaceAdd;
         }
     }
 }
