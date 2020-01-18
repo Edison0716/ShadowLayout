@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -45,6 +46,9 @@ public class MyTabView extends View {
     // 圆角因子
     private static float RADIUS_UNSELECTED_BG = 0.2f;
     private static float RADIUS_SELECTED_BG = 0.1f;
+
+    // 底部控制点延伸因子
+    private static float RADIUS_BOTTOM_OVER_LENGTH = 0.1f;
 
     private int mTabBackgroundShiftY = 10;
     private Paint mRectFPaint;
@@ -199,8 +203,8 @@ public class MyTabView extends View {
         mSelectedRightPath.quadTo(pointControlYX, pointControlYY, pointDX, pointDY);
 
         // 第五个点 计算
-        int pointEX = pointControlYX - (((pointAX - pointControlZX) - (pointAX - pointControlYX)) * (longEdge - pointAY)
-                / longEdge);
+        // 左上角的控制点 -
+        int pointEX = pointControlYX - (((pointAX - pointControlZX) - (pointAX - pointControlYX)) * (longEdge - pointAY) / longEdge);
         int pointEY = pointControlZY - (pointControlZY * pointAY / longEdge);
 
         // 第六个点
@@ -219,13 +223,10 @@ public class MyTabView extends View {
 
     private void calculateSelectedPathLeft() {
         mSelectedLeftPath = new Path();
-
         // 一共3个控制点 7个普通点
         int pointAX = 0;
         int pointAY = (int) (mSelectTabWidth * RADIUS_SELECTED_BG);
-
         mSelectedLeftPath.moveTo(pointAX, pointAY);
-
         int pointBX = (int) (mSelectTabWidth * RADIUS_SELECTED_BG);
         int pointBY = 0;
 
@@ -262,7 +263,9 @@ public class MyTabView extends View {
         mSelectedLeftPath.quadTo(pointControlYX, pointControlYY, pointDX, pointDY);
 
         // 第五个点 计算
+        // 右上角的控制点 + (右下角控制点 - 右上角的控制点) * (斜边 - 控制点与普通点的边长) / 斜边长
         int pointEX = pointControlYX + ((pointControlZX - pointControlYX) * (longEdge - pointBX) / longEdge);
+        // 右下角控制点 - (右下角控制点 * 控制点与普通点的边长) / 斜边长
         int pointEY = pointControlZY - (pointControlZY * pointBX / longEdge);
 
         // 第六个点
@@ -290,59 +293,72 @@ public class MyTabView extends View {
         } else {
             return path;
         }
-
         // 根据当前是第几个tab  计算X轴起始点
         int distanceLeft = (int) (index * mTabWidth);
-
+        int bottomDistance = (int) (mTabWidth * RADIUS_BOTTOM_OVER_LENGTH);
         // 顶部两个控制点距离两侧距离
         int top2ControlPointDistanceWith2Sides = (int) (mTabWidth * RADIUS_SELECTED_BG);
-
         // 控制点 1 左上角
-        int pointControlWX = distanceLeft - top2ControlPointDistanceWith2Sides;
+        int pointControlWX = distanceLeft;
         int pointControlWY = 0;
-
         // 控制点 2 右上角
-        int pointControlXX = (int) (distanceLeft + mTabWidth + top2ControlPointDistanceWith2Sides);
+        int pointControlXX = (int) (distanceLeft + mTabWidth);
         int pointControlXY = 0;
-
         // 控制点 3 左下角
-        int pointControlZX = distanceLeft;
+        int pointControlZX = distanceLeft - top2ControlPointDistanceWith2Sides;
         int pointControlZY = getMeasuredHeight();
-
         // 控制点 4 右下角
-        int pointControlYX = (int) (distanceLeft + mTabWidth);
+        int pointControlYX = (int) (distanceLeft + mTabWidth + top2ControlPointDistanceWith2Sides);
         int pointControlYY = pointControlZY;
-
         // 普通点距离控制点的距离
         int commonPointDistanceWithControl = (int) (mTabWidth * RADIUS_SELECTED_BG);
-
+        // 左上角的控制点 开始 顺时针 普通点 1
         int pointAX = pointControlWX + commonPointDistanceWithControl;
         int pointAY = 0;
-
+        // 普通点 2
         int pointBX = pointControlXX - commonPointDistanceWithControl;
         int pointBY = 0;
-
-
         path.moveTo(pointAX, pointAY);
         path.lineTo(pointBX, pointBY);
-
+        // 计算右侧斜边
         int longEdge = (int) Math.sqrt(pointControlYY * pointControlYY + ((pointControlYX - pointControlXX) * (pointControlYX - pointControlXX)));
-
-
+        // 普通点 3
         // 右上角 + （右下角 - 右上角）* 控制点与普通点的距离 / 斜边
         int pointDX = pointControlXX + (pointControlYX - pointControlXX) * commonPointDistanceWithControl / longEdge;
         //  右下角 * 控制点与普通点的距离 / 斜边
         int pointDY = pointControlYY * commonPointDistanceWithControl / longEdge;
-        path.quadTo(pointControlXX, pointControlXY,pointDX,pointDY);
-
-//        path.quadTo(pointControlXX,pointControlXY,pointBX + 40,pointBY + 40);
-
-//        path.moveTo(pointControlWX, pointControlWY);
-//        path.lineTo(pointControlXX, pointControlXY);
-//        path.lineTo(pointControlYX, pointControlYY);
-//        path.lineTo(pointControlZX, pointControlZY);
-
-
+        path.quadTo(pointControlXX, pointControlXY, pointDX, pointDY);
+        // 普通点 4
+        // 右上角的控制点 + (右下角控制点 - 右上角的控制点) * (斜边 - 控制点与普通点的边长) / 斜边长
+        int pointCX = pointControlXX + ((pointControlYX - pointControlXX) * (longEdge - commonPointDistanceWithControl) / longEdge);
+        // 右下角控制点 - (右下角控制点 * 控制点与普通点的边长) / 斜边长
+        int pointCY = pointControlYY - (pointControlYY * commonPointDistanceWithControl / longEdge);
+        path.lineTo(pointCX,pointCY);
+        // 普通点 5
+        // 右下角的控制点 + 控制点与普通点的边长
+        int pointEX = pointControlYX + commonPointDistanceWithControl;
+        int pointEY = pointControlZY;
+        path.quadTo(pointControlYX,pointControlYY,pointEX,pointEY);
+        // 普通点 6
+        // 左下角控制点 - 控制点与普通点的边长
+        int pointFX = pointControlZX - commonPointDistanceWithControl;
+        int pointFY = pointEY;
+        path.lineTo(pointFX,pointFY);
+        // 普通点 7
+        // （左上角控制点 - 左下角控制点）^ 2 +height ^ 2 开根号
+        int leftLongEdge = (int) Math.sqrt((pointControlWX - pointControlZX) * (pointControlWX - pointControlZX) + getMeasuredHeight() * getMeasuredHeight());
+        // 左上角的控制点 - ((左上角的控制点 - 左下角的控制点) * 普通点与控制点之间的距离 / 左斜边长)
+        int pointGX = pointControlWX - ((pointControlWX - pointControlZX) * (leftLongEdge - commonPointDistanceWithControl) / leftLongEdge);
+        //     (左斜边长 - 普通点与控制点之间的距离) * Height / 左斜边长
+        int pointGY = (leftLongEdge - commonPointDistanceWithControl) * getMeasuredHeight() / leftLongEdge;
+        path.quadTo(pointControlZX,pointControlZY,pointGX,pointGY);
+        // 普通点 8
+        // 左上角的控制点 - (左上角的控制点 - 左下角的控制点 * 控制点与普通点的距离 / 边长)
+        // 普通点与控制点的距离 * 高度  / 做斜边长
+        int pointHX = pointControlWX - ((pointControlWX - pointControlZX) * commonPointDistanceWithControl / leftLongEdge);
+        int pointHY = commonPointDistanceWithControl * getMeasuredHeight() / leftLongEdge;
+        path.lineTo(pointHX,pointHY);
+        path.quadTo(pointControlWX,pointControlWY,pointAX,pointAY);
         return path;
     }
 
