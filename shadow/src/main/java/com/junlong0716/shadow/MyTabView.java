@@ -1,6 +1,7 @@
 package com.junlong0716.shadow;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,8 +11,6 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
-
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -26,33 +25,35 @@ import java.util.List;
  */
 public class MyTabView extends View {
 
+    // 三种状态的Tab
     private static final int TAB_TYPE_LEFT = 0xffe1;
     private static final int TAB_TYPE_RIGHT = 0xffe2;
     private static final int TAB_TYPE_OTHER = 0xffe3;
 
+    // tab 数据
     private final ArrayList<MyTabEntity> mTabData = new ArrayList<>(4);
+    // 缓存 TAB_TYPE_OTHER 路径 因为每次OnDraw要进行计算 所以缓存
+    private final SparseArray<Path> mOtherPathCache = new SparseArray<>(2);
+
     private Paint mTabBackgroundPaint;
+    private Paint mSelectedPathPaint;
+    private Paint mRectFTextPaint;
+    private Paint mTextPaint;
+
     private Path mTabBackgroundPath;
     private Path mSelectedLeftPath;
     private Path mSelectedRightPath;
-    private Paint mSelectedPathPaint;
-    // 缓存路径
-    private final SparseArray<Path> mOtherPathCache = new SparseArray<>(2);
+
+
     // 计算一个tab要占用多大的宽度
     private float mTabWidth = 0f;
     // 计算一个选中的Tab占用的宽度
     private float mSelectTabWidth = 0f;
-
     // 圆角因子
-    private static float RADIUS_UNSELECTED_BG = 0.2f;
+    private static float RADIUS_UNSELECTED_BG = 0.25f;
     private static float RADIUS_SELECTED_BG = 0.1f;
-
-    // 底部控制点延伸因子
-    private static float RADIUS_BOTTOM_OVER_LENGTH = 0.1f;
-
+    // 选中的Tab 高出 背景高度大小
     private int mTabBackgroundShiftY = 15;
-    private Paint mRectFPaint;
-    private Paint mTextPaint;
 
 
     @Nullable
@@ -68,7 +69,16 @@ public class MyTabView extends View {
 
     public MyTabView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initAttrs(attrs, defStyleAttr);
         initView();
+    }
+
+    private void initAttrs(AttributeSet attrs, int defStyleAttr) {
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MyTabView, defStyleAttr, 0);
+        try {
+        } finally {
+            typedArray.recycle();
+        }
     }
 
     private void initView() {
@@ -80,10 +90,10 @@ public class MyTabView extends View {
         mSelectedPathPaint.setColor(Color.WHITE);
         mSelectedPathPaint.setAntiAlias(true);
 
-        mRectFPaint = new Paint();
-        mRectFPaint.setColor(Color.TRANSPARENT);
-        mRectFPaint.setStyle(Paint.Style.FILL);
-        mRectFPaint.setAntiAlias(true);
+        mRectFTextPaint = new Paint();
+        mRectFTextPaint.setColor(Color.TRANSPARENT);
+        mRectFTextPaint.setStyle(Paint.Style.FILL);
+        mRectFTextPaint.setAntiAlias(true);
 
         mTextPaint = new Paint();
         mTextPaint.setTextSize(Utils.sp2px(getContext(), 14));
@@ -100,9 +110,11 @@ public class MyTabView extends View {
         } else {
             mTabWidth = getMeasuredWidth() / mTabData.size();
         }
+
+        mOtherPathCache.clear();
+        // 设置一个最大的宽度
         int maximumWidth = getMeasuredWidth() / 4;
 
-        // 设置一个最大的宽度
         if (mTabWidth > maximumWidth) {
             mTabWidth = maximumWidth;
 
@@ -115,10 +127,13 @@ public class MyTabView extends View {
 
         mSelectTabWidth = mTabWidth + mTabWidth / 6;
 
+        // 计算背景路线
         calculateBackgroundPath();
 
+        // 计算选中左侧路线
         calculateSelectedPathLeft();
 
+        // 计算选中右侧
         calculateSelectedPathRight();
     }
 
@@ -126,8 +141,7 @@ public class MyTabView extends View {
         for (int i = 0; i < mTabData.size(); i++) {
             float rectWidth = i * mTabWidth;
             RectF textRectF = new RectF(rectWidth, mTabBackgroundShiftY, rectWidth + mTabWidth, getMeasuredHeight());
-
-            canvas.drawRect(textRectF, mRectFPaint);
+            canvas.drawRect(textRectF, mRectFTextPaint);
             drawText(canvas, textRectF, mTabData.get(i));
         }
     }
@@ -146,7 +160,7 @@ public class MyTabView extends View {
 
     private void calculateBackgroundPath() {
         mTabBackgroundPath = new Path();
-        // EdisonLi TODO 2020/1/16 10 为偏移量
+        // EdisonLi 2020/1/16 10 为偏移量
         // 普通点 1
         int pointAX = 0;
         int pointAY = mTabBackgroundShiftY + (int) (getMeasuredHeight() * RADIUS_UNSELECTED_BG);
@@ -162,7 +176,7 @@ public class MyTabView extends View {
         int controlPointBX = getMeasuredWidth();
         int controlPointBY = mTabBackgroundShiftY;
         // 普通点 3
-        int pointCX = controlPointBX - pointAY;
+        int pointCX = controlPointBX - pointBX;
         int pointCY = mTabBackgroundShiftY;
         mTabBackgroundPath.lineTo(pointCX, pointCY);
         mTabBackgroundPath.quadTo(controlPointBX, controlPointBY, controlPointBX, pointAY);
@@ -174,7 +188,6 @@ public class MyTabView extends View {
     private void calculateSelectedPathRight() {
         mSelectedRightPath = new Path();
         // 同样 一共3个控制点 7个普通点
-
         // 第一个点是从右上角开始
         int pointAX = getMeasuredWidth();
         int pointAY = (int) (mSelectTabWidth * RADIUS_SELECTED_BG);
@@ -306,7 +319,6 @@ public class MyTabView extends View {
         }
         // 根据当前是第几个tab  计算X轴起始点
         int distanceLeft = (int) (index * mTabWidth);
-        int bottomDistance = (int) (mTabWidth * RADIUS_BOTTOM_OVER_LENGTH);
         // 顶部两个控制点距离两侧距离
         int top2ControlPointDistanceWith2Sides = (int) (mTabWidth * RADIUS_SELECTED_BG);
         // 控制点 1 左上角
@@ -380,7 +392,7 @@ public class MyTabView extends View {
         canvas.drawPath(mTabBackgroundPath, mTabBackgroundPaint);
         // 绘制选中的
         for (int i = 0; i < mTabData.size(); ++i) {
-            if (mTabData.get(i).isTabSelected() && !mTabData.get(i).isSpaceAdd()) {
+            if (mTabData.get(i).isTabSelected() && !mTabData.get(i).isSpaceAdded()) {
                 switch (mTabData.get(i).getTabTyp()) {
                     case TAB_TYPE_LEFT:
                         canvas.drawPath(mSelectedLeftPath, mSelectedPathPaint);
@@ -420,8 +432,7 @@ public class MyTabView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            float fingerUpX = event.getX();
-            calculateFingerPressedTab(fingerUpX);
+            calculateFingerPressedTab(event.getX());
         }
         return true;
     }
@@ -430,10 +441,9 @@ public class MyTabView extends View {
         int pressedIndex = (int) (fingerUpX / mTabWidth);
         for (int i = 0; i < mTabData.size(); ++i) {
             mTabData.get(i).setTabSelected(false);
-            if (i == pressedIndex && !mTabData.get(i).isSpaceAdd()) {
+            if (i == pressedIndex && !mTabData.get(i).isSpaceAdded()) {
                 mTabData.get(i).setTabSelected(true);
                 invalidate();
-                Toast.makeText(getContext(), pressedIndex + "", Toast.LENGTH_SHORT).show();
                 if (mTabClickCallback != null) {
                     mTabClickCallback.onTabClickCallback(pressedIndex);
                 }
@@ -455,11 +465,15 @@ public class MyTabView extends View {
         private String tabTitle;
         private boolean tabSelected;
         private int tabTyp;
-        private boolean isSpaceAdd = false;
+        private boolean isSpaceAdded = false;
 
         public MyTabEntity(String tabTitle, boolean tabSelected) {
             this.tabTitle = tabTitle;
             this.tabSelected = tabSelected;
+        }
+
+        public MyTabEntity(String tabTitle) {
+            this.tabTitle = tabTitle;
         }
 
         public String getTabTitle() {
@@ -486,12 +500,12 @@ public class MyTabView extends View {
             this.tabTyp = tabTyp;
         }
 
-        public boolean isSpaceAdd() {
-            return isSpaceAdd;
+        public boolean isSpaceAdded() {
+            return isSpaceAdded;
         }
 
         public void setSpaceAdd(boolean spaceAdd) {
-            isSpaceAdd = spaceAdd;
+            isSpaceAdded = spaceAdd;
         }
     }
 }

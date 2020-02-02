@@ -72,4 +72,15 @@
 
     </declare-styleable>
 
+    <declare-styleable name="MyTabView">
+        <attr name="tab_unselected_bg_corner_radius" format="dimension"/>
+        <attr name="tab_selected_bg_corner_radius" format="dimension"/>
+        <!-- 未选中 与 选中tab 高度差-->
+        <attr name="tab_unselected_bg_dy" format="dimension"/>
+        <attr name="tab_selected_bg_width" format="dimension"/>
+        <attr name="tab_selected_text_color" format="color"/>
+        <attr name="tab_selected_bg_color" format="color"/>
+        <attr name="tab_unselected_bg_color" format="color"/>
+        <attr name="tab_unselected_text_color" format="color"/>
+    </declare-styleable>
 </resources>
