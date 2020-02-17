@@ -2,6 +2,7 @@ package com.junlong0716.shadow;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -83,8 +84,9 @@ public class MyTabView extends View {
 
     private void initView() {
         mTabBackgroundPaint = new Paint();
-        mTabBackgroundPaint.setColor(Color.parseColor("#A6000000"));
+        mTabBackgroundPaint.setColor(Color.parseColor("#000000"));
         mTabBackgroundPaint.setAntiAlias(true);
+        mTabBackgroundPaint.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.INNER));
 
         mSelectedPathPaint = new Paint();
         mSelectedPathPaint.setColor(Color.WHITE);

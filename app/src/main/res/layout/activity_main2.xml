@@ -1,35 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fe8159"
-    android:orientation="vertical"
-    android:paddingTop="30dp">
+    android:background="@color/colorAccent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <com.junlong0716.shadow.BlurView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="10dp">
+        android:layout_height="match_parent" />
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:layout_marginTop="60dp"-->
+    <!--        android:paddingTop="10dp">-->
 
 
-        <com.junlong0716.shadow.MyTabView
-            android:id="@+id/tv"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            />
+    <!--        <com.junlong0716.shadow.MyTabView-->
+    <!--            android:id="@+id/tv"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="50dp"-->
+    <!--            android:layout_marginStart="12dp"-->
+    <!--            android:layout_marginEnd="12dp"-->
+    <!--            />-->
 
-    </LinearLayout>
+    <!--    </LinearLayout>-->
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginStart="12dp"
-        android:background="#fff"
-        android:layout_marginEnd="12dp"/>
+    <!--    <TextView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="200dp"-->
+    <!--        android:layout_marginTop="120dp"-->
+    <!--        android:layout_marginStart="12dp"-->
+    <!--        android:background="#fff"-->
+    <!--        android:layout_marginEnd="12dp"/>-->
 
 
-</LinearLayout>
+</FrameLayout>

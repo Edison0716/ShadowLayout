@@ -1,54 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ShadowLayout">
-        <attr name="android:foreground"/>
-        <attr name="shadowMargin" format="dimension"/>
-        <attr name="shadowMarginTop" format="dimension"/>
-        <attr name="shadowMarginLeft" format="dimension"/>
-        <attr name="shadowMarginRight" format="dimension"/>
-        <attr name="shadowMarginBottom" format="dimension"/>
-        <attr name="cornerRadius" format="dimension"/>
-        <attr name="cornerRadiusTL" format="dimension"/>
-        <attr name="cornerRadiusTR" format="dimension"/>
-        <attr name="cornerRadiusBL" format="dimension"/>
-        <attr name="cornerRadiusBR" format="dimension"/>
-        <attr name="pressedColor" format="color"/>
-        <attr name="shadowColor" format="color"/>
-        <attr name="shadowDx" format="float"/>
-        <attr name="shadowDy" format="float"/>
-        <attr name="shadowRadius" format="dimension"/>
-        <attr name="backgroundColor" format="color"/>
-        <attr name="layout_gravity">
-            <flag name="top"
-                value="0x30"/>
-            <flag name="bottom"
-                value="0x50"/>
-            <flag name="left"
-                value="0x03"/>
-            <flag name="right"
-                value="0x05"/>
-            <flag name="center_vertical"
-                value="0x10"/>
-            <flag name="fill_vertical"
-                value="0x70"/>
-            <flag name="center_horizontal"
-                value="0x01"/>
-            <flag name="fill_horizontal"
-                value="0x07"/>
-            <flag name="center"
-                value="0x11"/>
-            <flag name="fill"
-                value="0x77"/>
-            <flag name="clip_vertical"
-                value="0x80"/>
-            <flag name="clip_horizontal"
-                value="0x08"/>
-            <flag name="start"
-                value="0x00800003"/>
-            <flag name="end"
-                value="0x00800005"/>
-        </attr>
-    </declare-styleable>
 
     <declare-styleable name="ShadowFrameLayout">
         <!--阴影的圆角大小-->
@@ -82,5 +33,20 @@
         <attr name="tab_selected_bg_color" format="color"/>
         <attr name="tab_unselected_bg_color" format="color"/>
         <attr name="tab_unselected_text_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="EHaiWidgetShadowLayout">
+        <!--圆角-->
+        <attr name="shadowCornerRadius" format="dimension" />
+        <!--阴影颜色-->
+        <attr name="shadowColor" format="color" />
+        <!--背景颜色-->
+        <attr name="shadowBackgroundStartColor" format="color" />
+        <attr name="shadowBackgroundEndColor" format="color"/>
+        <!--阴影扩散大小-->
+        <attr name="shadowSpreadSize" format="dimension" />
+        <!--偏移量-->
+        <attr name="shadowDx" format="dimension" />
+        <attr name="shadowDy" format="dimension" />
     </declare-styleable>
 </resources>

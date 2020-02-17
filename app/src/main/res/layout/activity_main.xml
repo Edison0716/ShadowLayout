@@ -1,40 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.junlong0716.shadow.ShadowFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:hl_cornerRadius="20dp"
-    app:hl_dx="0dp"
-    app:hl_dy="6dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
-    app:hl_shadowColor="#FFBA76"
-    app:hl_shadowBackColor="#FF9300"
-    app:hl_shadowLimit="3dp">
+    android:layout_height="wrap_content">
 
-
-
-
-    <LinearLayout
+   <!-- <com.junlong0716.shadow.ShadowFrameLayout
+        android:id="@+id/sfl"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:hl_cornerRadius="20dp"
+        app:hl_dx="0dp"
+        app:hl_dy="6dp"
+        app:hl_shadowBackColor="#FF9300"
+        app:hl_shadowColor="#80FFBA76"
+        app:hl_shadowLimit="3dp">
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:text="去选车"
             android:textColor="#fff"
-            android:textSize="15dp"
-            android:text="去选车"/>
+            android:textSize="15dp" />
 
-    </LinearLayout>
 
-</com.junlong0716.shadow.ShadowFrameLayout>
+    </com.junlong0716.shadow.ShadowFrameLayout>
+-->
+
+    <com.junlong0716.shadow.EHaiWidgetShadowLayout
+        android:id="@+id/sfl1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:shadowCornerRadius="20dp"
+        app:shadowDy="8dp"
+        app:shadowBackgroundStartColor="#FF9300"
+        app:shadowBackgroundEndColor="#FF9300"
+        app:shadowSpreadSize="8dp"
+        app:shadowColor="#80FFBA76">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="去选车"
+            android:textColor="#fff"
+            android:textSize="15dp" />
+
+
+    </com.junlong0716.shadow.EHaiWidgetShadowLayout>
+
+
+</RelativeLayout>
