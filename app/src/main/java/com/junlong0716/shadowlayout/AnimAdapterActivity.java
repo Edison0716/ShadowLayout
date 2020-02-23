@@ -25,11 +25,7 @@ public class AnimAdapterActivity extends AppCompatActivity {
         ViewPager vp = findViewById(R.id.viewpager);
         AnimPagerAdapter animPagerAdapter = new AnimPagerAdapter(mData, this);
         vp.setAdapter(animPagerAdapter);
-
-        vp.setOffscreenPageLimit(animPagerAdapter.getCount());
-
-
-
+        vp.setOffscreenPageLimit(mData.size() / 2);
 
     }
 }

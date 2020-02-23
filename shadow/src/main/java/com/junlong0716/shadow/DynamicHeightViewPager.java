@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.ToastUtils;
+
 /**
  * @ClassName: DynamicHeightViewPager
  * @Description:
@@ -24,7 +26,6 @@ public class DynamicHeightViewPager extends ViewPager {
 
     public DynamicHeightViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-
         addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -53,6 +54,7 @@ public class DynamicHeightViewPager extends ViewPager {
             currentView.measure(widthMeasureSpec, heightMeasureSpec);
         }
 
+        ToastUtils.showShort(getChildCount()+"");
         if (mChildHeight.size() != getChildCount()) {
             for (int i = 0; i < getChildCount(); ++i) {
                 View child = getChildAt(i);
